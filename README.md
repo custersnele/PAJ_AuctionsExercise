@@ -64,7 +64,7 @@ De AuctionDao voorziet de volgende functionaliteit:
 ```java
 public interface AuctionDao {
    Auction saveAuction(Auction auction);
-   Auction findAuctionById(long auction);
+   Optional<Auction> findAuctionById(long auction);
    List<Auction> findAllAuctions();
 }
 ```
