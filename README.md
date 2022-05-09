@@ -37,7 +37,7 @@ GET http://localhost:8080/auctions/users/{userId}
 
 ### Task 1: Unit testing
 
-Complete all unit tests. All test that need implementation are marked with `// TODO implement this test`
+Complete all unit tests. All tests that need implementation are marked with `// TODO implement this test`
 For testing an h2 in-memory database can be used.
 
 Pluralsight course on Mockito: https://app.pluralsight.com/library/courses/tdd-junit5/table-of-contents
