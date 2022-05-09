@@ -1,6 +1,8 @@
 package be.pxl.auctions.dao.impl;
 
+import be.pxl.auctions.dao.UserRepository;
 import be.pxl.auctions.model.User;
+import be.pxl.auctions.rest.resource.UserCreateResource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -21,7 +23,7 @@ public class UserDaoImplTest {
 	@Autowired
 	private TestEntityManager entityManager;
 	@Autowired
-	private UserDaoImpl userDao;
+	private UserRepository userRepository;
 
 	@Test
 	public void userCanBeSavedAndRetrievedById() {
@@ -30,11 +32,11 @@ public class UserDaoImplTest {
 		user.setLastName("Zuckerberg");
 		user.setDateOfBirth(LocalDate.of(1989, 5, 3));
 		user.setEmail("mark@facebook.com");
-		long newUserId = userDao.saveUser(user).getId();
+		long newUserId = userRepository.save(user).getId();
 		entityManager.flush();
 		entityManager.clear();
 
-		Optional<User> retrievedUser = userDao.findUserById(newUserId);
+		Optional<User> retrievedUser = userRepository.findUserById(newUserId);
 		assertTrue(retrievedUser.isPresent());
 
 		assertEquals(user.getFirstName(), retrievedUser.get().getFirstName());

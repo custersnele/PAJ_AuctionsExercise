@@ -1,6 +1,6 @@
 package be.pxl.auctions.service;
 
-import be.pxl.auctions.dao.UserDao;
+import be.pxl.auctions.dao.UserRepository;
 import be.pxl.auctions.model.User;
 import be.pxl.auctions.rest.resource.UserDTO;
 import be.pxl.auctions.util.exception.UserNotFoundException;
@@ -24,7 +24,7 @@ public class UserServiceGetUserByIdTest {
 	private static final long USER_ID = 5L;
 
 	@Mock
-	private UserDao userDao;
+	private UserRepository userRepository;
 	@InjectMocks
 	private UserService userService;
 	private User user;
@@ -41,14 +41,14 @@ public class UserServiceGetUserByIdTest {
 
 	@Test
 	public void returnsNullWhenNoUserWithGivenIdFound() {
-		when(userDao.findUserById(USER_ID)).thenReturn(Optional.empty());
+		when(userRepository.findUserById(USER_ID)).thenReturn(Optional.empty());
 
 		assertThrows(UserNotFoundException.class, () -> userService.getUserById(USER_ID));
 	}
 
 	@Test
 	public void returnsUserWhenUserFoundWithGivenId() {
-		when(userDao.findUserById(USER_ID)).thenReturn(Optional.of(user));
+		when(userRepository.findUserById(USER_ID)).thenReturn(Optional.of(user));
 		UserDTO userById = userService.getUserById(USER_ID);
 		assertEquals(USER_ID, userById.getId());
 	}

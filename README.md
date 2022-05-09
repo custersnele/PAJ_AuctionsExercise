@@ -1,17 +1,20 @@
 # Auctions Exercise
-Hogeschool PXL - Exercise Auctions
+Hogeschool PXL - Auctions exercise
+
+Practice Spring Boot and unit testing.
 
 Fork this project to get started!
 
-### Inleiding
+### Introduction
 
-Start de spring boot toepassing en verken de code.
-Om de applicatie uit te voeren heb je een databank met de naam auctionsdb nodig.
-Je vindt een docker-compose.yml bestand om deze databank aan te maken. 
-De User-tabel wordt aangemaakt (of aangepast) door hibernate.
+The application uses a MySQL database named auctionsdb.
+A file named docker-compose.yml is provided to create the database.
+Start this Spring Boot application and explore the provided code.
+The User-table is created (or updated) by Hibernate.
 
-De volgende REST endpoints zijn beschikbaar:
-1. Het opslaan van een nieuwe user
+The following REST endpoints are available:
+
+1. Create a new user
 
 POST http://localhost:8080/auctions/users
 met body:
@@ -23,76 +26,83 @@ met body:
 "dateOfBirth": "24/04/1998"
 }`
 
-2. Het opzoeken van alle users
+2. Retrieve all users
 
 GET http://localhost:8080/auctions/users
    
 
-3. Het opzoeken van een user adhv de primary key
+3. Retrieve a user by primary key
 
 GET http://localhost:8080/auctions/users/{userId}
 
-### Opdracht 1: Unit testing
+### Task 1: Unit testing
 
-Implementeer de gevraagde unit testen. Om de service laag te testen moet je gebruikmaken van Mockito.
-De persistence laag wordt getest met een h2 in-memory database.
+Complete all unit tests. All test that need implementation are marked with `// TODO implement this test`
+For testing an h2 in-memory database can be used.
 
-Pluralsight cursus over Mockito: https://app.pluralsight.com/library/courses/tdd-junit5/table-of-contents
+Pluralsight course on Mockito: https://app.pluralsight.com/library/courses/tdd-junit5/table-of-contents
 
-### Opdracht 2: Extra entity klassen
+### Taks 2: Extra entity classes
 
-Er zullen items aangeboden in veilingen (auctions). Iedere veiling heeft een beschrijving
-(description) en een einddatum (endDate). Gebruikers kunnen een bod uitbrengen op een item.
-De entity klasse User hadden wij reeds voorzien. Pas nu
-de klassen Auction en Bid aan zodat dit ook geldige entity klassen worden. 
-Voorzie de bidirectionele relatie tussen Auction en Bid (cascadetype in de klasse Auction wordt ALL). 
-Voorzie in de klasse Auction de methode addBid() waarmee de  bi-directionele relatie steeds 
-wordt gerespecteerd.
+Items are offered in auctions. Every auction has a description and endDate.
+Users can bid. The entity class User is already implemented.
+Update the implementation of classes Auction and Bid to make valid entity classes.
+There should be a bidirectional relationship between Auction and Bid (cascadetype in the
+class Auction is ALL).
 
-Implementeer in de klasse Auction verder ook de methoden isFinished() en findHighestBid().
-- isFinished() geeft false indien de einddatum van de veiling nog niet is verstreken, en true
-indien de einddatum van de veiling is verstreken.
+In the class Auction you implement the methods isFinished() and findHighestBid().
+
+- isFinished() returns false if the endDate is not expired. If the endDate is today, the Auction isn't expired yet. The method returns true if the endDate of the Auction is expired (after the endDate).
    
-- findHighestBid() geeft het Bid-object met de hoogste waarde. Indien er nog geen biedingen zijn wordt null gegeven. 
+- findHighestBid() returns the Bid with the highest value. If there are no bids, an empty Optional is returned.
   
-Schrijf unit testen voor de methoden isFinished() en findHighestBid().
+Implement unit tests for both methods.
 
-### Opdracht 3: AuctionDao en AuctionDaoImpl
+### Taks 3: AuctionRepository
 
-De AuctionDao voorziet de volgende functionaliteit:
+Create the AuctionRepository. It must be possible to save a new auction, to retrieve an
+auction by id, and retrieve all the current auctions.
 
-```java
-public interface AuctionDao {
-   Auction saveAuction(Auction auction);
-   Optional<Auction> findAuctionById(long auction);
-   List<Auction> findAllAuctions();
-}
-```
+### Task 4: Create a new auction and retrieve by id
 
-### Opdracht 4: Een nieuwe veiling aanmaken (auction)
+Implement a REST endpoint to create a new auction and retrieve an auction by its id.
+When you retrieve an auction by its id, all the bids are retrieved as well.
+Besides the bids additional information is retrieved:  numberOfBids, highestBid (value only) and highestBidBy (username).
 
-Zorg voor een REST endpoint waarmee een nieuwe veiling aangemaakt kan worden. Een veiling moet ook
-adhv zijn primary key opgevraagd kunnen worden. Je krijgt alle biedingen voor de veiling te zien,
-maar de volgende voeg je nog extra toe in de DTO: numberOfBids, highestBid en highestBidBy. 
-Voorzie ook een REST endpoint waarmee je alle
-huidige veilingen kan opvragen.
+![Count servlet](./documentation/images/auctions_1.png)`
 
-### Opdracht 5: Biedingen registreren
+### Task 5: Retrieve all current auctions
 
-Voorzie een REST endpoint en implementeer het registreren van biedingen.
+Implement a REST endpoint to retrieve all current auctions.
+![Count servlet](./documentation/images/auctions_2.png)`
 
-POST http://localhost:8080/auctions/rest/auctions/{auctionId}/bids met body
+### Task 6: Register a bid
+
+Create a REST endpoint to register a bid. All business-logic must be implemented and tested as well. 
+
+POST http://localhost:8080/auctions/rest/auctions/{auctionId}/bids with body
 `
 {
 "email": "sophie@pxl.be",
 "price": 22.5
 }
-`
 
-Zorg dat onderstaand business regels voldaan worden en zorg ook voor de nodige unit testen om je code
-te valideren.
+![Count servlet](./documentation/images/auctions_3.png)`
 
-- Gooi een exception op indien de auction en/of de user niet bestaan.
-- Gooi een exception op indien het nieuwe bod lager is dat het huidige hoogste bod.
-- Gooi een exception op indien de user reeds het hoogste bod heeft.
-- Gooi een exception op indien de auction reeds afgelopen is.
+Following business-rules must be fulfilled.
+
+- The auctionId must belong to be a valid current auction. Bidding on a finished auction is not allowed.
+- The email must belong to an existing user.
+- The price of the bid must exceed previous bids.
+- The bid is not created by the user with the current highest bid.
+
+![Count servlet](./documentation/images/auctions_4.png)
+![Count servlet](./documentation/images/auctions_5.png)
+![Count servlet](./documentation/images/auctions_6.png)
+
+### Task 7: Create a servlet
+
+Create a Servlet that handles a GET request. The servlet creates an html-page with the
+number of active auctions.
+
+![Count servlet](./documentation/images/auctions_7.png)

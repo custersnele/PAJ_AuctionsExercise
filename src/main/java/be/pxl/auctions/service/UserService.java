@@ -1,6 +1,6 @@
 package be.pxl.auctions.service;
 
-import be.pxl.auctions.dao.UserDao;
+import be.pxl.auctions.dao.UserRepository;
 import be.pxl.auctions.model.User;
 import be.pxl.auctions.rest.resource.UserCreateResource;
 import be.pxl.auctions.rest.resource.UserDTO;
@@ -25,15 +25,19 @@ import java.util.stream.Collectors;
 public class UserService {
 	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/uuuu");
 
+	private final UserRepository userRepository;
+
 	@Autowired
-	private UserDao userDao;
+	public UserService(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
 
 	public List<UserDTO> getAllUsers() {
-		return userDao.findAllUsers().stream().map(this::mapToUserResource).collect(Collectors.toList());
+		return userRepository.findAll().stream().map(this::mapToUserResource).collect(Collectors.toList());
 	}
 
 	public UserDTO getUserById(long userId) {
-		return userDao.findUserById(userId).map(this::mapToUserResource).orElseThrow(()  -> new UserNotFoundException("Unable to find User with id [" + userId + "]"));
+		return userRepository.findUserById(userId).map(this::mapToUserResource).orElseThrow(()  -> new UserNotFoundException("Unable to find User with id [" + userId + "]"));
 	}
 
 	public UserDTO createUser(UserCreateResource userInfo) throws RequiredFieldException, InvalidEmailException, DuplicateEmailException, InvalidDateException {
@@ -52,7 +56,7 @@ public class UserService {
 		if (userInfo.getDateOfBirth() == null) {
 			throw new RequiredFieldException("DateOfBirth");
 		}
-		Optional<User> existingUser = userDao.findUserByEmail(userInfo.getEmail());
+		Optional<User> existingUser = userRepository.findUserByEmail(userInfo.getEmail());
 		if (existingUser.isPresent()) {
 			throw new DuplicateEmailException(userInfo.getEmail());
 		}
@@ -60,7 +64,7 @@ public class UserService {
 		if (user.getDateOfBirth().isAfter(LocalDate.now())) {
 			throw new InvalidDateException("DateOfBirth cannot be in the future.");
 		}
-		return mapToUserResource(userDao.saveUser(user));
+		return mapToUserResource(userRepository.save(user));
 	}
 
 	private UserDTO mapToUserResource(User user) {
