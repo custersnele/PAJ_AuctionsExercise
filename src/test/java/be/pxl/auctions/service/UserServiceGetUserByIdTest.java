@@ -1,6 +1,6 @@
 package be.pxl.auctions.service;
 
-import be.pxl.auctions.dao.UserRepository;
+import be.pxl.auctions.repository.UserRepository;
 import be.pxl.auctions.model.User;
 import be.pxl.auctions.rest.resource.UserDTO;
 import be.pxl.auctions.util.exception.UserNotFoundException;
@@ -41,14 +41,14 @@ public class UserServiceGetUserByIdTest {
 
 	@Test
 	public void returnsNullWhenNoUserWithGivenIdFound() {
-		when(userRepository.findUserById(USER_ID)).thenReturn(Optional.empty());
+		when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
 		assertThrows(UserNotFoundException.class, () -> userService.getUserById(USER_ID));
 	}
 
 	@Test
 	public void returnsUserWhenUserFoundWithGivenId() {
-		when(userRepository.findUserById(USER_ID)).thenReturn(Optional.of(user));
+		when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
 		UserDTO userById = userService.getUserById(USER_ID);
 		assertEquals(USER_ID, userById.getId());
 	}

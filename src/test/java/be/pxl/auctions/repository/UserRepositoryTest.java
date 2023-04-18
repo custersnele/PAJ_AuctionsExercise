@@ -1,8 +1,6 @@
-package be.pxl.auctions.dao.impl;
+package be.pxl.auctions.repository;
 
-import be.pxl.auctions.dao.UserRepository;
 import be.pxl.auctions.model.User;
-import be.pxl.auctions.rest.resource.UserCreateResource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Repository.class))
-public class UserDaoImplTest {
+public class UserRepositoryTest {
 
 	@Autowired
 	private TestEntityManager entityManager;
@@ -36,7 +34,7 @@ public class UserDaoImplTest {
 		entityManager.flush();
 		entityManager.clear();
 
-		Optional<User> retrievedUser = userRepository.findUserById(newUserId);
+		Optional<User> retrievedUser = userRepository.findById(newUserId);
 		assertTrue(retrievedUser.isPresent());
 
 		assertEquals(user.getFirstName(), retrievedUser.get().getFirstName());

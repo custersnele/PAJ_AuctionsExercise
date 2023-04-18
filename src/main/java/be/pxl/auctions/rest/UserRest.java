@@ -4,6 +4,7 @@ package be.pxl.auctions.rest;
 import be.pxl.auctions.rest.resource.UserCreateResource;
 import be.pxl.auctions.rest.resource.UserDTO;
 import be.pxl.auctions.service.UserService;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class UserRest {
 
 
     @PostMapping
-    public UserDTO createUser(@RequestBody UserCreateResource userCreateResource) {
+    public UserDTO createUser(@RequestBody @Valid UserCreateResource userCreateResource) {
         return userService.createUser(userCreateResource);
     }
 }

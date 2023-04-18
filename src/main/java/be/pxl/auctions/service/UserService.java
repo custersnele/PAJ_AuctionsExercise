@@ -1,6 +1,6 @@
 package be.pxl.auctions.service;
 
-import be.pxl.auctions.dao.UserRepository;
+import be.pxl.auctions.repository.UserRepository;
 import be.pxl.auctions.model.User;
 import be.pxl.auctions.rest.resource.UserCreateResource;
 import be.pxl.auctions.rest.resource.UserDTO;
@@ -37,25 +37,10 @@ public class UserService {
 	}
 
 	public UserDTO getUserById(long userId) {
-		return userRepository.findUserById(userId).map(this::mapToUserResource).orElseThrow(()  -> new UserNotFoundException("Unable to find User with id [" + userId + "]"));
+		return userRepository.findById(userId).map(this::mapToUserResource).orElseThrow(()  -> new UserNotFoundException("Unable to find User with id [" + userId + "]"));
 	}
 
 	public UserDTO createUser(UserCreateResource userInfo) throws RequiredFieldException, InvalidEmailException, DuplicateEmailException, InvalidDateException {
-		if (StringUtils.isBlank(userInfo.getFirstName())) {
-			throw new RequiredFieldException("FirstName");
-		}
-		if (StringUtils.isBlank(userInfo.getLastName())) {
-			throw new RequiredFieldException("LastName");
-		}
-		if (StringUtils.isBlank(userInfo.getEmail())) {
-			throw new RequiredFieldException("Email");
-		}
-		if (!EmailValidator.isValid(userInfo.getEmail())) {
-			throw new InvalidEmailException(userInfo.getEmail());
-		}
-		if (userInfo.getDateOfBirth() == null) {
-			throw new RequiredFieldException("DateOfBirth");
-		}
 		Optional<User> existingUser = userRepository.findUserByEmail(userInfo.getEmail());
 		if (existingUser.isPresent()) {
 			throw new DuplicateEmailException(userInfo.getEmail());
